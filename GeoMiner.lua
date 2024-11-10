@@ -392,51 +392,48 @@ function AStarMiner()
             dug = dug + 1
             minerProgressBar:setProgress(math.floor(dug / startBlocksLen * 100))
             minerProgressLabel:setText(tostring(math.floor(dug / startBlocksLen * 100)).."%")
-            goto continue
-        end
-
-        offset[1] = moveResult[1][1]
-        offset[2] = moveResult[1][2]
-        offset[3] = moveResult[1][3]
-
-        minerStatusLabel:setForeground(colors.black)
-        minerStatusLabel:setText("Digging "..currentBlockName)
-
-        if moveResult[1][4] == "U" then
-            while turtle.detectUp() do
-                turtle.digUp()
-            end
-        elseif moveResult[1][4] == "D" then
-            while turtle.detectDown() do
-                turtle.digDown()
-            end
         else
-            turnTo(moveResult[1][4], direction)
-            while turtle.detect() do
-                turtle.dig()
+            offset[1] = moveResult[1][1]
+            offset[2] = moveResult[1][2]
+            offset[3] = moveResult[1][3]
+
+            minerStatusLabel:setForeground(colors.black)
+            minerStatusLabel:setText("Digging "..currentBlockName)
+
+            if moveResult[1][4] == "U" then
+                while turtle.detectUp() do
+                    turtle.digUp()
+                end
+            elseif moveResult[1][4] == "D" then
+                while turtle.detectDown() do
+                    turtle.digDown()
+                end
+            else
+                turnTo(moveResult[1][4], direction)
+                while turtle.detect() do
+                    turtle.dig()
+                end
             end
+
+            dug = dug + 1
+
+            removeBlockAt(moveResult[2][1], moveResult[2][2], moveResult[2][3], blocks)
+
+            for i = 1, #blocks do
+                blocks[i].x = blocks[i].x - offset[1]
+                blocks[i].y = blocks[i].y - offset[2]
+                blocks[i].z = blocks[i].z - offset[3]
+            end
+
+
+            currentPos[1] = currentPos[1] + offset[1]
+            currentPos[2] = currentPos[2] + offset[2]
+            currentPos[3] = currentPos[3] + offset[3]
+            offset = {0, 0, 0}
+
+            minerProgressBar:setProgress(math.floor((dug / startBlocksLen) * 100))
+            minerProgressLabel:setText(tostring(math.floor((dug / startBlocksLen) * 100)).."%")
         end
-
-        dug = dug + 1
-
-        removeBlockAt(moveResult[2][1], moveResult[2][2], moveResult[2][3], blocks)
-
-        for i = 1, #blocks do
-            blocks[i].x = blocks[i].x - offset[1]
-            blocks[i].y = blocks[i].y - offset[2]
-            blocks[i].z = blocks[i].z - offset[3]
-        end
-
-
-        currentPos[1] = currentPos[1] + offset[1]
-        currentPos[2] = currentPos[2] + offset[2]
-        currentPos[3] = currentPos[3] + offset[3]
-        offset = {0, 0, 0}
-
-        minerProgressBar:setProgress(math.floor((dug / startBlocksLen) * 100))
-        minerProgressLabel:setText(tostring(math.floor((dug / startBlocksLen) * 100)).."%")
-
-        ::continue::
     end
 
 end
